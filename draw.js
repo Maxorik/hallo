@@ -7,6 +7,33 @@
     let upPressed = false;
     let downPressed = false;
 
+function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);   //очистка старой позиции
+    ctx.drawImage(hero, hX, hY);
+    drawPumpkin();
+    collisionDetection();
+    drawScore();
+    drawCoor();
+    wallDetection();
+    drawDynamic();
+    
+    if(rightPressed && hX < canvas.width) {
+        hX += 5;
+    }
+    else if(leftPressed && hX > 0) {
+        hX -= 5;
+    }
+    else if(upPressed && hY > 0) {
+        hY -= 5;
+    }
+    
+    else if(downPressed && hY < canvas.height) {
+        hY += 5;
+    }
+    
+    requestAnimationFrame(draw);
+}
+
     let hero = new Image();
     let pumpkin = new Image();
     let wall = new Image();
@@ -105,8 +132,6 @@ function drawScore() {
   ctx.fillText("SCORE "+eaten, 1200, 20);
 }
 
-
-
 function drawCoor() {
   ctx.font = "20px Sensel bold";
   ctx.fillStyle = "green";
@@ -128,7 +153,7 @@ function drawDynamic() {
     drawWall(1, 65, 0, 580, wallwidth, wall);
     
     }   
-/////////////////////////////////////////////////////////////Движение
+
 function keyDownHandler(e) {      //реагирование на нажатие кнопки; 39 - вправо, 37 - влево
     if(e.keyCode == 39) {
         rightPressed = true;        //кнопка нажата
@@ -158,7 +183,8 @@ function keyUpHandler(e) {
         downPressed = false;
     }
 }     
-///////////////////////////////////////////////////////////////////////
+
+
 draw();
 drawDynamic();
 document.addEventListener("keydown", keyDownHandler, false); //событие при нажатии кнопки (нажата)
