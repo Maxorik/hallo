@@ -11,6 +11,7 @@ function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);   //очистка старой позиции
     ctx.drawImage(hero, hX, hY);
     drawPumpkin();
+    drawDynamic();
     collisionDetection();
     drawScore();
     drawCoor();
@@ -145,7 +146,6 @@ function drawCoor() {
 function drawDynamic() {	
     drawWall(2, 14, 700, 20, wallwidth, wall);  //куда, кол-во, X, Y, Ширина картинки, Картинка // 1 - по иксу рисуем; 2 - по игреку
     drawWall(1, 11, 600, 160, wallwidth, wall);
-    ////////////////////////////////////////////////////////Рамки
     drawWall(1, 65, 0, 0, wallwidth, wall);
     drawWall(2, 10, 0, 0, wallwidth, wall);
     drawWall(2, 10, 0, 400, wallwidth, wall);
@@ -184,58 +184,14 @@ function keyUpHandler(e) {
     }
 }     
 
+function allKeyIsUp() {
+    rightPressed = false;
+    leftPressed = false;
+    upPressed = false;
+    downPressed = false;
+}
+
 
 draw();
-drawDynamic();
 document.addEventListener("keydown", keyDownHandler, false); //событие при нажатии кнопки (нажата)
 document.addEventListener("keyup", keyUpHandler, false); //отпущена  
-    
-/**
-Отрисовка ОДНОГО объекта
-    параметры:
-    x - расположение по Х
-    у - рсположение по У
-    obj - объект (его картинка, ширина, высота)
-    isStatic - можно ли его двигать 
-    isEaten - можно ли его поднять
-    isEnemy - можно ли дотронуться
-    score - плюс очков за поднятие
-*/
-
-function drawObj(x, y, obj, isEaten, score, isStatic=0, isEnemy=0) {
-    let image = new Image();
-    image.src = obj.img;
-    
-    ctx.drawImage(image, x, y);
-}
-
-
-/**
-Объект
-    img - путь до изображения объекта
-    width - ширина объекта в px
-    height - высота объекта в px
-*/
-
-const pumpkins = {
-    img: './img/pumpkin.png',
-    width: 20,
-    height: 20
-}
-
-
-/**
-Пример отрисовки 15 тыкв
-*/
-
-function drawManyPumkins(n) {
-    let x = 40,
-        y = 200;
-    
-    for(let i=0; i<n; i++) {
-        drawObj(x, y, pumpkins, 1, 25);
-        x = x + pumpkins.width + 15;
-    }
-}
-
-drawManyPumkins(15);

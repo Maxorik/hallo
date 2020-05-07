@@ -6,10 +6,69 @@
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: #DEB887; display: block; margin: 0 auto; }
+        #myCanvas {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controllerBox {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #controller {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: darkred;
+            border: 1px solid #000;
+            cursor: pointer;
+            position: absolute;
+            left:33%;
+        }
+        
+        .controllerZone {
+            width: 40px;
+            height: 40px;
+            background: lightgreen;
+            display: none;
+        }
+        
+        .controleerMiddle {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .controllerOneBtn {
+            width:42px;
+            height:42px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-<canvas id="myCanvas" width="1300" height="600"></canvas>
+    <canvas id="myCanvas" width="1300" height="600"></canvas>
+    <div id='controllerBox'>
+        <div class='controllerOneBtn'>
+            <div id='controllerToUp' class='controllerZone'>up</div>
+        </div>
+        <div class='controleerMiddle'>
+            <div id='controllerToLeft' class='controllerZone'>left</div>
+            <div id='controllerCenter' class='controllerZone'>center</div>
+            <div id='controller'></div>
+            <div id='controllerToDown' class='controllerZone'>right</div>
+        </div>
+        <div class='controllerOneBtn'>
+            <div id='controllerToRight' class='controllerZone'>down</div>
+        </div>
+    </div>
 <script src='draw.js'></script> 
+<script src='controller.js'></script> 
 </body>
 </html>
