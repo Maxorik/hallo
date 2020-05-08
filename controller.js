@@ -10,8 +10,8 @@ controller.addEventListener('touchstart', function(event){
     let shiftY = event.clientY - controller.getBoundingClientRect().top;
     
     //controller.style.position = 'absolute';
-    controller.style.zIndex = 1000;
-    document.body.append(controller);
+    //controller.style.zIndex = 1000;
+    //document.body.append(controller);
 
     moveAt(event.pageX, event.pageY);
 
