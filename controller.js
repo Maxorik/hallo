@@ -11,7 +11,7 @@ controller.addEventListener('touchstart', function(event){
     
     //controller.style.position = 'absolute';
     //controller.style.zIndex = 1000;
-    //document.body.append(controller);
+    document.body.append(controller);
 
     moveAt(event.pageX, event.pageY);
 
@@ -95,9 +95,13 @@ controller.addEventListener('touchstart', function(event){
     };
 })
 
-//controller.touchmove = function() {
-//    return false;
-//};
+controller.touchmove = function() {
+    return false;
+};
+
+controller.ondragstart = function() {
+    return false;
+};
 
 function setPositive(num) {
     if(num < 0){
