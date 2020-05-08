@@ -5,7 +5,7 @@ const handlerDiff = 20; //отклонение в px от центра
 let controllerState = 'nonactive';
 let diffX, diffY;
 
-controller.addEventListener('mousedown', function(event){
+controller.addEventListener('touchstart', function(event){
     let shiftX = event.clientX - controller.getBoundingClientRect().left;
     let shiftY = event.clientY - controller.getBoundingClientRect().top;
     
@@ -78,11 +78,11 @@ controller.addEventListener('mousedown', function(event){
         }
     }
 
-    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('touchmove', onMouseMove);
     
     function controllerReset() {
-        document.removeEventListener('mousemove', onMouseMove);
-        controller.onmouseup = null;
+        document.removeEventListener('touchmove', onMouseMove);
+        controller.touchend = null;
         controller.style.left = contX - 20 + 'px';
         controller.style.top = contY - 20 + 'px';
         diffX = 0;
@@ -90,12 +90,12 @@ controller.addEventListener('mousedown', function(event){
         allKeyIsUp();
     }
 
-    controller.onmouseup = function() {
+    controller.touchend = function() {
         controllerReset();
     };
 })
 
-controller.ondragstart = function() {
+controller.touchmove = function() {
     return false;
 };
 
