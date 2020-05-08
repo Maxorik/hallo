@@ -144,8 +144,8 @@ function drawCoor() {
 
     /* отрисовка стен */
 function drawDynamic() {	
-    drawWall(2, 14, 700, 20, wallwidth, wall);  //куда, кол-во, X, Y, Ширина картинки, Картинка // 1 - по иксу рисуем; 2 - по игреку
-    drawWall(1, 11, 600, 160, wallwidth, wall);
+//    drawWall(2, 14, 700, 20, wallwidth, wall);  //куда, кол-во, X, Y, Ширина картинки, Картинка // 1 - по иксу рисуем; 2 - по игреку
+//    drawWall(1, 11, 600, 160, wallwidth, wall);
     drawWall(1, 65, 0, 0, wallwidth, wall);
     drawWall(2, 10, 0, 0, wallwidth, wall);
     drawWall(2, 10, 0, 400, wallwidth, wall);
