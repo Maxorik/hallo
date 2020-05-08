@@ -9,7 +9,7 @@ controller.addEventListener('touchstart', function(event){
     let shiftX = event.clientX - controller.getBoundingClientRect().left;
     let shiftY = event.clientY - controller.getBoundingClientRect().top;
     
-    controller.style.position = 'absolute';
+    //controller.style.position = 'absolute';
     controller.style.zIndex = 1000;
     document.body.append(controller);
 
@@ -95,9 +95,9 @@ controller.addEventListener('touchstart', function(event){
     };
 })
 
-controller.touchmove = function() {
-    return false;
-};
+//controller.touchmove = function() {
+//    return false;
+//};
 
 function setPositive(num) {
     if(num < 0){
