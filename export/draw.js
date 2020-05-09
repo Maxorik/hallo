@@ -3,16 +3,7 @@ var win = {width: $(window).width(), height: $(window).height()};
 var mouse = {x: 0, y: 0};
 var joy = {x: 0, y: 0};
 var dot = {x: 0, y: 0};
-var dotVel = {x: 0.15, y: 0.2};
-var opacityVar = 0;
-
-var hue = 220;
-var warm = hue - 60;
-var cold = hue + 60;
-
-$(window).on('resize', function(){
-	win = {width: $(window).width(), height: $(window).height()};
-})
+var dotVel = {x: 0, y: 0};
 
 $(document).ready(function(){
 	$('.side').on('mousedown', function(){
@@ -27,6 +18,20 @@ $(document).ready(function(){
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
 	})
+///////////////////////////////////////////////////////////
+    $('.side').on('touchstart', function(){
+		$('body').addClass('grabbing')
+		thumb = true;
+	})
+	$(document).on('touchend', function(){
+		$('body').removeClass('grabbing')
+		thumb = false;
+	})
+	$(document).on('touchmove', function(e){
+		mouse.x = e.touches[0].pageX;
+		mouse.y = e.touches[0].pageY;
+	})
+    
 	requestAnimationFrame(animate);
 	drawJoystick();
 })
@@ -61,14 +66,17 @@ function updateJoystickPosition(){
 
 function updateDotPosition(){
 
-	dotVel.x += joy.x/10;
-	dotVel.y += joy.y/10;
+// скорость движения точки, чем меньше цифра - тем быстрее движется.
+// зависит от возможного расстояния sx и sy в drawDot
+    
+	dotVel.x += joy.x/80;
+	dotVel.y += joy.y/80;
 
 	dotVel.x *= 0.95;
 	dotVel.y *= 0.95;
 
-	dot.x += dotVel.x/10;
-	dot.y += dotVel.y/10;
+	dot.x += dotVel.x/50;
+	dot.y += dotVel.y/50;
 
 	if (dot.x > 1.1)
 		dot.x = -1.09;
@@ -82,56 +90,29 @@ function updateDotPosition(){
 }
 
 function drawJoystick(){
-	var xRotate = joy.x * -30;	
+	var xRotate = joy.x * -30;	    // радиус рычага по Х и Y
 	var yRotate = joy.y * 30;	
+    var transform;
+    
+    if(thumb === true) {
+        transform = 'rotateY('+xRotate+'deg) rotateX('+yRotate+'deg) perspective(5000rem) translateZ(0rem)';
+    } else {
+        transform = 'rotateY(0deg) rotateX(0deg) perspective(5000rem) translateZ(0rem)';
+    }
 
-	//calculate angle based on mouse position
-	var transform = 'rotateY('+xRotate+'deg) rotateX('+yRotate+'deg) perspective(5000rem) translateZ(0rem)';
-	var transformDip = 'translateX('+(xRotate*-0.2)+'%) translateY('+(yRotate*0.2)+'%)';
-	var transformBase = 'translateX('+(xRotate*-0.08)+'%) translateY('+(yRotate*0.08)+'%)';
-
-	$('.thumb').css('transform', transform);
-	$('.dip').css('transform', transformDip);
-	$('.side').css('transform', transform);
-	$('.base').css('transform', transformBase);
-	$('.stem').css('transform', transform);
-
-	//variable for measing amount facing light
-	var muke = (joy.x + joy.y - 2)*-0.25;
-
-	var bg = 'hsl('+( hue - muke*30 + 15 )+',15%,'+(30 + muke*20)+'%)';
-	var bgSide = 'linear-gradient(-45deg, hsl('+cold+',15%,'+(15 + muke*25)+'%),hsl('+warm+',20%,'+(70 + muke*20)+'%))';
-	$('.thumb').css('background-color', bg);	
-	$('.side').css('background', bgSide);	
-
-	//generate dynamic shadows
-	var light = 'inset '+(muke*4 + 2)+'rem '+(muke*4 + 2)+'rem '+(muke*10 + 5)+'rem hsla('+warm+',20%,65%,'+(0.5 + muke*0.5)+')';
-	var dark = 'inset '+(muke*6 - 4)+'rem '+(muke*6 - 4)+'rem '+(15 - muke*10)+'rem hsla('+cold+',30%,10%,'+(1 - (muke*0.5))+')';
-	var lightTight = 'inset '+(5)+'rem '+(5)+'rem '+(10)+'rem hsla('+warm+',10%,80%,'+(0.5 + muke*0.5)+')';
-	var darkTight = 'inset '+(0)+'rem '+(0)+'rem '+(10)+'rem hsla('+cold+',60%,5%,'+(1 - (muke*0.5))+')';
-	var fall = (10 + muke*15)+'rem '+(10 + muke*15)+'rem '+(15 + muke*35)+'rem hsla('+cold+',45%,5%,'+(0.4 - (muke*0.1))+')';
-	var bs = light + ',' + lightTight + ',' + dark + ', ' + darkTight + ',' + fall;
-
-	var lightDip = 'inset '+(-2 - muke*2)+'rem '+(-2 - muke*2)+'rem '+(8 + muke*4)+'rem hsla('+warm+',20%,65%,'+(0.3 + muke*0.5)+')';
-	var darkDip = 'inset '+(4 - muke*2)+'rem '+(4 - muke*2)+'rem '+(12 - muke*4)+'rem hsla('+cold+',30%,20%,'+(0.8 - muke*0.5)+')';
-	var lightDipOuter = (2 + muke*2)+'rem '+(2 + muke*2)+'rem '+(8 + muke*4)+'rem hsla('+warm+',20%,65%,'+(0.3 + muke*0.5)+')';
-	var darkDipOuter = (-4 + muke*2)+'rem '+(-4 + muke*2)+'rem '+(12 - muke*4)+'rem hsla('+cold+',30%,20%,'+(0.8 - muke*0.5)+')';
-	var bsDip = lightDipOuter + ',' + darkDipOuter + ',' + lightDip + ',' + darkDip;
-
-	$('.thumb').css('box-shadow', bs);	
-	$('.dip').css('box-shadow', bsDip);	
-
+	$('.thumb').css('transform', transform);       // кнопка 
+	$('.side').css('transform', transform);        // рычаг
+	$('.stem').css('transform', transform);        // часть между кнопкой и подставкой (рычаг)
 }
 
+// движение точки при взаимодействии с рычагом
 function drawDot(){
-
-	opacityVar = Math.max(Math.min( opacityVar + Math.random()*0.02 - 0.01, 0.2), 0);
-	var transformDot = 'translateX('+(dot.x*100)+'rem) translateY('+(dot.y*100)+'rem)';
+    //возможное расстояние
+    let sx = 1300;
+    let sy = 1300;
+    
+	var transformDot = 'translateX('+(dot.x*sx)+'rem) translateY('+(dot.y*sy)+'rem)';
 	$('.dot').css('transform', transformDot);
-	var opacityDot = 0.2 + (Math.sqrt( (Math.abs(dotVel.x) + Math.abs(dotVel.y)) * 2)) + opacityVar;
-	$('.dot').css('opacity', opacityDot);
-
-
 }
 
 

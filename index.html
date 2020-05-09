@@ -3,72 +3,24 @@
 <head>
     <meta charset="utf-8" />
     <title>hallo</title>
-    <style>
-    	* { padding: 0; margin: 0; }
-    	canvas { background: #DEB887; display: block; margin: 0 auto; }
-        #myCanvas {
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        #controllerBox {
-            width: 300px;
-            height: 300px;
-            position: absolute;
-            bottom: 50px;
-            right: 50px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        #controller {
-            width: 100px;
-            height: 100px;
-            border-radius: 100%;
-            background: darkred;
-            border: 1px solid #000;
-            cursor: pointer;
-            position: absolute;
-            left:33%;
-        }
-        
-        .controllerZone {
-            width: 100px;
-            height: 100px;
-            background: lightgreen;
-            display: none;
-        }
-        
-        .controleerMiddle {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-        
-        .controllerOneBtn {
-            width:102px;
-            height:102px;
-            margin: 0 auto;
-        }
-    </style>
+    <link rel='stylesheet' href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
-    <canvas id="myCanvas" width="1300" height="600"></canvas>
-    <div id='controllerBox'>
-        <div class='controllerOneBtn'>
-            <div id='controllerToUp' class='controllerZone'>up</div>
+    <div class="screen">
+        <div class="dot"></div>
+    </div>
+    <div class="joy-wrap">
+        <div class="cover">
+            <div class="base"></div>
         </div>
-        <div class='controllerMiddle'>
-            <div id='controllerToLeft' class='controllerZone'>left</div>
-            <div id='controllerCenter' class='controllerZone'>center</div>
-            <div id='controller'></div>
-            <div id='controllerToDown' class='controllerZone'>right</div>
-        </div>
-        <div class='controllerOneBtn'>
-            <div id='controllerToRight' class='controllerZone'>down</div>
+        <div class="stem"></div>
+        <div class="side"></div>
+        <div class="thumb">
+            <div class="dip"></div>
         </div>
     </div>
-<script src='draw.js'></script> 
-<script src='controller.js'></script> 
+
+<script src='draw.js'></script>  
 </body>
 </html>
