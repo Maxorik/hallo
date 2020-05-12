@@ -1,9 +1,9 @@
-var thumb = false;
-var win = {width: $(window).width(), height: $(window).height()};
-var mouse = {x: 0, y: 0};
-var joy = {x: 0, y: 0};
-var dot = {x: 0, y: 0};
-var dotVel = {x: 0, y: 0};
+let thumb = false;
+let win = {width: $(window).width(), height: $(window).height()};
+let mouse = {x: 0, y: 0};
+let joy = {x: 0, y: 0};
+let dot = {x: 0, y: 0};
+let dotVel = {x: 0, y: 0};
 
 $(document).ready(function(){
 	$('.side').on('mousedown', function(){
@@ -90,12 +90,24 @@ function updateDotPosition(){
 }
 
 function drawJoystick(){
-	var xRotate = joy.x * -30;	    // радиус рычага по Х и Y
-	var yRotate = joy.y * 30;	
-    var transform;
+	let xRotate = joy.x * -30;	    // радиус рычага по Х и Y
+	let yRotate = joy.y * 30;	
+    let transform;
     
+    /* двигаем джойстик */
     if(thumb === true) {
         transform = 'rotateY('+xRotate+'deg) rotateX('+yRotate+'deg) perspective(5000rem) translateZ(0rem)';
+        
+        if(xRotate < 6 && xRotate > -20 && yRotate < 0) {
+            console.log('up!');
+        } else if(xRotate < 10 && xRotate > -20 && yRotate > 0) {
+            console.log('down!');
+        } else if(xRotate > 0 && yRotate < 10) {
+            console.log('left!');
+        } else if(xRotate < -20 && yRotate > -6) {
+            console.log('right!');
+        }
+        
     } else {
         transform = 'rotateY(0deg) rotateX(0deg) perspective(5000rem) translateZ(0rem)';
     }
