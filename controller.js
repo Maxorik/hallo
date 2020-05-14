@@ -1,9 +1,7 @@
-var thumb = false;
-var win = {width: $(window).width(), height: $(window).height()};
-var mouse = {x: 0, y: 0};
-var joy = {x: 0, y: 0};
-var dot = {x: 0, y: 0};
-var dotVel = {x: 0, y: 0};
+let thumb = false;
+let win = {width: $(window).width(), height: $(window).height()};
+let mouse = {x: 0, y: 0};
+let joy = {x: 0, y: 0};
 
 $(document).ready(function(){
 	$('.side').on('mousedown', function(){
@@ -18,7 +16,7 @@ $(document).ready(function(){
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
 	})
-///////////////////////////////////////////////////////////
+
     $('.side').on('touchstart', function(){
 		$('body').addClass('grabbing')
 		thumb = true;
@@ -39,8 +37,6 @@ $(document).ready(function(){
 function animate(){
 	updateJoystickPosition();
 	drawJoystick();
-	updateDotPosition();
-	drawDot();
 	requestAnimationFrame(animate);
 }
 
@@ -64,39 +60,35 @@ function updateJoystickPosition(){
 
 }
 
-function updateDotPosition(){
-
-// скорость движения точки, чем меньше цифра - тем быстрее движется.
-// зависит от возможного расстояния sx и sy в drawDot
-    
-	dotVel.x += joy.x/80;
-	dotVel.y += joy.y/80;
-
-	dotVel.x *= 0.95;
-	dotVel.y *= 0.95;
-
-	dot.x += dotVel.x/50;
-	dot.y += dotVel.y/50;
-
-	if (dot.x > 1.1)
-		dot.x = -1.09;
-	if (dot.x < -1.1)
-		dot.x = 1.09;
-	if (dot.y > 1.1)
-		dot.y = -1.09;
-	if (dot.y < -1.1)
-		dot.y = 1.09;
-
-}
-
 function drawJoystick(){
-	var xRotate = joy.x * -30;	    // радиус рычага по Х и Y
-	var yRotate = joy.y * 30;	
-    var transform;
+	let xRotate = joy.x * -30;	    // радиус рычага по Х и Y
+	let yRotate = joy.y * 30;	
+    let transform;
     
+    /* двигаем джойстик */
     if(thumb === true) {
         transform = 'rotateY('+xRotate+'deg) rotateX('+yRotate+'deg) perspective(5000rem) translateZ(0rem)';
+        
+        if(xRotate < 6 && xRotate > -20 && yRotate < 0) {
+            //console.log('up!');
+            allKeyIsUp();
+            upPressed = true; 
+        } else if(xRotate < 10 && xRotate > -20 && yRotate > 0) {
+            //console.log('down!');
+            allKeyIsUp();
+            downPressed = true; 
+        } else if(xRotate > 0 && yRotate < 10) {
+            //console.log('left!');
+            allKeyIsUp();
+            leftPressed = true; 
+        } else if(xRotate < -20 && yRotate > -6) {
+            //console.log('right!');
+            allKeyIsUp();
+            rightPressed = true; 
+        }
+        
     } else {
+        allKeyIsUp();
         transform = 'rotateY(0deg) rotateX(0deg) perspective(5000rem) translateZ(0rem)';
     }
 
@@ -104,15 +96,4 @@ function drawJoystick(){
 	$('.side').css('transform', transform);        // рычаг
 	$('.stem').css('transform', transform);        // часть между кнопкой и подставкой (рычаг)
 }
-
-// движение точки при взаимодействии с рычагом
-function drawDot(){
-    //возможное расстояние
-    let sx = 1300;
-    let sy = 1300;
-    
-	var transformDot = 'translateX('+(dot.x*sx)+'rem) translateY('+(dot.y*sy)+'rem)';
-	$('.dot').css('transform', transformDot);
-}
-
 

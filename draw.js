@@ -1,130 +1,197 @@
-let thumb = false;
-let win = {width: $(window).width(), height: $(window).height()};
-let mouse = {x: 0, y: 0};
-let joy = {x: 0, y: 0};
-let dot = {x: 0, y: 0};
-let dotVel = {x: 0, y: 0};
+ /* создание холста, базовое расположение объектов, загрузка спрайтов */
+	const canvas = document.getElementById('myCanvas');
+	const ctx = canvas.getContext('2d');
+	
+    let rightPressed = false;
+    let leftPressed = false;
+    let upPressed = false;
+    let downPressed = false;
 
-$(document).ready(function(){
-	$('.side').on('mousedown', function(){
-		$('body').addClass('grabbing')
-		thumb = true;
-	})
-	$(document).on('mouseup', function(){
-		$('body').removeClass('grabbing')
-		thumb = false;
-	})
-	$(document).on('mousemove', function(e){
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
-	})
-///////////////////////////////////////////////////////////
-    $('.side').on('touchstart', function(){
-		$('body').addClass('grabbing')
-		thumb = true;
-	})
-	$(document).on('touchend', function(){
-		$('body').removeClass('grabbing')
-		thumb = false;
-	})
-	$(document).on('touchmove', function(e){
-		mouse.x = e.touches[0].pageX;
-		mouse.y = e.touches[0].pageY;
-	})
+function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);   //очистка старой позиции
+    ctx.drawImage(hero, hX, hY);
+    drawPumpkin();
+    drawDynamic();
+    collisionDetection();
+    drawScore();
+    drawCoor();
+    wallDetection();
+    drawDynamic();
     
-	requestAnimationFrame(animate);
-	drawJoystick();
-})
-
-function animate(){
-	updateJoystickPosition();
-	drawJoystick();
-	updateDotPosition();
-	drawDot();
-	requestAnimationFrame(animate);
-}
-
-function updateJoystickPosition(){
-	if (thumb){
-		joy.x = (mouse.x / win.width - 0.5)*4;
-		joy.y = (mouse.y / win.height - 0.75)*4;
-		if (joy.x > 1)
-			joy.x = 1;
-		if (joy.x < -1)
-			joy.x = -1;
-		if (joy.y > 1)
-			joy.y = 1;
-		if (joy.y < -1)
-			joy.y = -1;
-
-	} else {
-		joy.x *= 0.6;
-		joy.y *= 0.6;
-	}
-
-}
-
-function updateDotPosition(){
-
-// скорость движения точки, чем меньше цифра - тем быстрее движется.
-// зависит от возможного расстояния sx и sy в drawDot
-    
-	dotVel.x += joy.x/80;
-	dotVel.y += joy.y/80;
-
-	dotVel.x *= 0.95;
-	dotVel.y *= 0.95;
-
-	dot.x += dotVel.x/50;
-	dot.y += dotVel.y/50;
-
-	if (dot.x > 1.1)
-		dot.x = -1.09;
-	if (dot.x < -1.1)
-		dot.x = 1.09;
-	if (dot.y > 1.1)
-		dot.y = -1.09;
-	if (dot.y < -1.1)
-		dot.y = 1.09;
-
-}
-
-function drawJoystick(){
-	let xRotate = joy.x * -30;	    // радиус рычага по Х и Y
-	let yRotate = joy.y * 30;	
-    let transform;
-    
-    /* двигаем джойстик */
-    if(thumb === true) {
-        transform = 'rotateY('+xRotate+'deg) rotateX('+yRotate+'deg) perspective(5000rem) translateZ(0rem)';
-        
-        if(xRotate < 6 && xRotate > -20 && yRotate < 0) {
-            console.log('up!');
-        } else if(xRotate < 10 && xRotate > -20 && yRotate > 0) {
-            console.log('down!');
-        } else if(xRotate > 0 && yRotate < 10) {
-            console.log('left!');
-        } else if(xRotate < -20 && yRotate > -6) {
-            console.log('right!');
-        }
-        
-    } else {
-        transform = 'rotateY(0deg) rotateX(0deg) perspective(5000rem) translateZ(0rem)';
+    if(rightPressed && hX < canvas.width) {
+        hX += 5;
     }
-
-	$('.thumb').css('transform', transform);       // кнопка 
-	$('.side').css('transform', transform);        // рычаг
-	$('.stem').css('transform', transform);        // часть между кнопкой и подставкой (рычаг)
-}
-
-// движение точки при взаимодействии с рычагом
-function drawDot(){
-    //возможное расстояние
-    let sx = 1300;
-    let sy = 1300;
+    else if(leftPressed && hX > 0) {
+        hX -= 5;
+    }
+    else if(upPressed && hY > 0) {
+        hY -= 5;
+    }
     
-	var transformDot = 'translateX('+(dot.x*sx)+'rem) translateY('+(dot.y*sy)+'rem)';
-	$('.dot').css('transform', transformDot);
+    else if(downPressed && hY < canvas.height) {
+        hY += 5;
+    }
+    
+    requestAnimationFrame(draw);
+}
+
+    let hero = new Image();
+    let pumpkin = new Image();
+    let wall = new Image();
+    hero.src = 'img/hero.png';
+    pumpkin.src = 'img/pumpkin.png';
+    wall.src = 'img/wall.png';
+    
+    let hX = 155;  //позиция героя
+    let hY = 155;
+    let pump = [];
+    let forcol = [];
+    let c_forcol = 0;
+    let pumpcount = 10;
+    let pumpPadding = 30;
+    let wallwidth = 20;
+    let eaten = 0;
+   
+    for(var i=0; i<pumpcount; i++){
+        pump[i] = { x: 0, y: 0, status: 1 };
+    }
+    
+    function drawPumpkin() {
+    for(var i=0; i<pumpcount; i++) {
+        if(pump[i].status == 1) {
+          var pX = (i*(pumpkin.width+pumpPadding))+100;
+          var pY = 40;
+          pump[i].x = pX;
+          pump[i].y = pY;
+          ctx.drawImage(pumpkin, pX, pY);
+         }
+       }
+     }
+
+    function drawWall(how, ac, aX, aY, aW, theImage){   //how = 1 - рисуем вправо; how = 2 - вниз
+        var newarr = [];                                    //ac - кол-во объектов (массив), aX и aY - коорд. начала, aW - ширина объекта
+        for(var i=0; i<ac; i++){                        //theImage - картинка
+            newarr[i] = {x:0, y:0, status: 2};
+            forcol[c_forcol] = newarr[i];
+            c_forcol++;
+        }
+        for(var i=0; i<ac; i++){
+          if(how == 1){
+            var nX = aX+i*aW;
+            var nY = aY;
+          }
+          else if(how == 2){
+            var nX = aX;
+            var nY = aY+i*aW;
+          }
+            newarr[i].x = nX;
+            newarr[i].y = nY;
+            ctx.drawImage(theImage, nX, nY);
+          }
+    }
+    
+function collisionDetection() {
+  for(var i=0; i<pumpcount; i++) {
+    var p = pump[i];
+    if(p.status == 1) {
+      if(hX+hero.width > p.x && hX+hero.width < p.x+pumpkin.width && hY < p.y && hY+hero.height > p.y) {
+        p.status = 0;
+        eaten++;
+      }
+    }  
+  }
+}
+    
+    
+    /**
+        TODO: ежесекундно проевряется КАЖДЫЙ блок (совпадает ли его позиция с игроком)
+        это медленно
+    */
+
+// взаимодействие со стенами
+function wallDetection() {
+  for(var i=0; i<c_forcol; i++) {
+    var fc = forcol[i];
+    if(fc.status == 2) {
+     if(0) {
+        //if(hY < fc.y && hY+hero.height > fc.y){ // ПЕРЕДЕЛАТЬ
+          //hX -= 5;
+            console.log('BUM');
+        //}
+     }
+     
+     /*if(hY + hero.height > fc.y && hX+hero.width/2 < fc.x) {
+       hY -= 5;
+      }*/
+    }  
+  }
+}
+
+function drawScore() {
+  ctx.font = "20px Sensel bold";
+  ctx.fillStyle = "#7921A1";
+  ctx.fillText("SCORE "+eaten, 1200, 20);
+}
+
+function drawCoor() {
+  ctx.font = "20px Sensel bold";
+  ctx.fillStyle = "green";
+  ctx.fillText("X hero "+hX, 1150, 80);
+  ctx.fillText("Y hero "+hY, 1050, 80);
+  ctx.fillText("hero width "+hero.width, 1100, 100);
+  ctx.fillText("hero height "+hero.height, 1100, 120);
+}
+
+    /* отрисовка стен */
+function drawDynamic() {	
+//    drawWall(2, 14, 700, 20, wallwidth, wall);  //куда, кол-во, X, Y, Ширина картинки, Картинка // 1 - по иксу рисуем; 2 - по игреку
+//    drawWall(1, 11, 600, 160, wallwidth, wall);
+    drawWall(1, 65, 0, 0, wallwidth, wall);
+    drawWall(2, 10, 0, 0, wallwidth, wall);
+    drawWall(2, 10, 0, 400, wallwidth, wall);
+    drawWall(2, 30, 1280, 0, wallwidth, wall);
+    drawWall(1, 65, 0, 580, wallwidth, wall);
+    
+    }   
+
+function keyDownHandler(e) {      //реагирование на нажатие кнопки; 39 - вправо, 37 - влево
+    if(e.keyCode == 39) {
+        rightPressed = true;        //кнопка нажата
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = true;
+    }
+    else if(e.keyCode == 38) {
+        upPressed = true;
+    }
+    else if(e.keyCode == 40) {
+        downPressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if(e.keyCode == 39) {           //кнопка отпущена
+        rightPressed = false;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = false;
+    }
+     else if(e.keyCode == 38) {
+        upPressed = false;
+    }
+     else if(e.keyCode == 40) {
+        downPressed = false;
+    }
+}     
+
+function allKeyIsUp() {
+    rightPressed = false;
+    leftPressed = false;
+    upPressed = false;
+    downPressed = false;
 }
 
 
+draw();
+document.addEventListener("keydown", keyDownHandler, false); //событие при нажатии кнопки (нажата)
+document.addEventListener("keyup", keyUpHandler, false); //отпущена  
