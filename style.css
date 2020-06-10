@@ -11,9 +11,10 @@
 }
 
 #world {
-    width: 100%;
+    width: 90%;
     height: auto;
     display: flex;
+    justify-content: space-between;
     margin: 20px auto;
 }
 
@@ -22,7 +23,6 @@
     grid-template-rows: repeat(10, 40px);
     grid-template-columns: repeat(10, 40px);
     border: 1px solid #000;
-    margin-left: 5%; 
 }
 
 #statistic {
@@ -53,6 +53,12 @@
     line-height: 40px;
     background: lightgreen;
     cursor: pointer;
+    color: #000;
+}
+
+#start_btn:hover {
+    background: darkgreen;
+    color: #fff;
 }
 
 .cell {
@@ -71,4 +77,49 @@
 
 .dead {
     background: darkblue;
+}
+
+
+@media screen and (max-device-width: 400px) {
+    #game {
+        width: 99vw;
+        height: auto;
+    }
+    
+    #rules {
+        width: 95%;
+    }
+    
+    #world {
+        width: 95%;
+        flex-direction: column;
+    }
+    
+    #pole {
+        display: grid;
+        grid-template-rows: repeat(10, 84px);
+        grid-template-columns: repeat(10, 84px);
+        border: none;
+        margin: auto;
+    }
+    
+    .stat {
+        display: none;
+    }
+    
+    .cell {
+        width: 84px;
+        height: 84px;
+    }
+    
+    #start_btn {
+        width: 400px;
+        height: 65px;
+        margin: auto;
+        margin-top: 10px;
+        border-radius: 5%;
+        font-size: 3.8em;
+        line-height: 65px;
+    }
+
 }
